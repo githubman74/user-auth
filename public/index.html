@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Forms</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script>
+        function showForm(formId) {
+            var forms = document.getElementsByClassName('form-container');
+            for (var i = 0; i < forms.length; i++) {
+                forms[i].classList.remove('active');
+            }
+            document.getElementById(formId).classList.add('active');
+        }
+
+        async function handleFormSubmit(event, formType) {
+            event.preventDefault();
+            var formData = new FormData(event.target);
+            var data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            var url = formType === 'Login' ? '/api/auth/login' : '/api/auth/register';
+
+            try {
+                var response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                var result = await response.text();
+                alert(result);
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="nav-links">
+            <a onclick="showForm('loginForm')">Login</a>
+            <a onclick="showForm('registerForm')">Register</a>
+        </div>
+
+        <div id="loginForm" class="form-container active">
+            <h2>Login Form</h2>
+            <form onsubmit="handleFormSubmit(event, 'Login')">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <input type="submit" value="Login">
+            </form>
+        </div>
+
+        <div id="registerForm" class="form-container">
+            <h2>Registration Form</h2>
+            <form onsubmit="handleFormSubmit(event, 'Registration')">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+                
+                <input type="submit" value="Register">
+            </form>
+        </div>
+    </div>
+</body>
+</html>
